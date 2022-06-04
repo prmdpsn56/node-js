@@ -4,9 +4,9 @@
     "port": 3306,
     "username": "root",
     "password": "root",
-    "database": "company",
+    "database": "company_stocks",
     "entities": [
-      "src/entity/*.js"
+      "src/models/*.js"
     ],
     "logging": true,
     "synchronize": true

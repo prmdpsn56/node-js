@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as cors from 'cors';
 import {createConnection} from 'typeorm';
-import {Company} from './entity/product';
+import {Stocks} from './models/stock';
 
 createConnection().then((db)=>{
 //we have basically define the cors policies, you can do this the other way too;
@@ -13,7 +13,7 @@ app.use(cors({
 app.use(express.json());
 
 //getting the company table
-const productRepository = db.getRepository(Company);
+const productRepository = db.getRepository(Stocks);
 
 //reaching the /route
 // app.use('/',(req,res,next)=>{
@@ -25,7 +25,11 @@ const productRepository = db.getRepository(Company);
 
 
 app.get('/api/products',async (req,res) => {
-    const products = await productRepository.find();
+    const products = await productRepository.find({
+        where:{
+            id: 2
+        }
+    });
     res.status(200).json(products);
 })    
 

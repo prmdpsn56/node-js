@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express = require("express");
 var cors = require("cors");
 var typeorm_1 = require("typeorm");
-var product_1 = require("./entity/product");
+var stock_1 = require("./models/stock");
 typeorm_1.createConnection().then(function (db) {
     //we have basically define the cors policies, you can do this the other way too;
     app.use(cors({
@@ -48,7 +48,7 @@ typeorm_1.createConnection().then(function (db) {
     //middleware that will parse the incoming json requests
     app.use(express.json());
     //getting the company table
-    var productRepository = db.getRepository(product_1.Company);
+    var productRepository = db.getRepository(stock_1.Stocks);
     //reaching the /route
     // app.use('/',(req,res,next)=>{
     //     console.log('this is working');
@@ -60,7 +60,11 @@ typeorm_1.createConnection().then(function (db) {
         var products;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, productRepository.find()];
+                case 0: return [4 /*yield*/, productRepository.find({
+                        where: {
+                            id: 2
+                        }
+                    })];
                 case 1:
                     products = _a.sent();
                     res.status(200).json(products);

@@ -9,30 +9,30 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Company = void 0;
+exports.Stocks = void 0;
 var typeorm_1 = require("typeorm");
-var Company = /** @class */ (function () {
-    function Company() {
+var Stocks = /** @class */ (function () {
+    function Stocks() {
     }
     __decorate([
         typeorm_1.PrimaryGeneratedColumn(),
         __metadata("design:type", Number)
-    ], Company.prototype, "id", void 0);
+    ], Stocks.prototype, "id", void 0);
     __decorate([
         typeorm_1.Column(),
         __metadata("design:type", String)
-    ], Company.prototype, "name", void 0);
+    ], Stocks.prototype, "code", void 0);
     __decorate([
-        typeorm_1.Column(),
+        typeorm_1.Column({ type: "timestamp", default: function () { return "CURRENT_TIMESTAMP"; } }),
         __metadata("design:type", String)
-    ], Company.prototype, "address", void 0);
+    ], Stocks.prototype, "time", void 0);
     __decorate([
-        typeorm_1.Column({ default: 2022 }),
+        typeorm_1.Column({ default: 0 }),
         __metadata("design:type", String)
-    ], Company.prototype, "registeredIn", void 0);
-    Company = __decorate([
+    ], Stocks.prototype, "price", void 0);
+    Stocks = __decorate([
         typeorm_1.Entity()
-    ], Company);
-    return Company;
+    ], Stocks);
+    return Stocks;
 }());
-exports.Company = Company;
+exports.Stocks = Stocks;
