@@ -5,7 +5,7 @@ export class Stocks {
     @PrimaryGeneratedColumn()
     id:number;
 
-    @Column()
+    @Column({})
     code: string;
 
     @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP"})

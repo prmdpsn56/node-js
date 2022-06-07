@@ -19,7 +19,7 @@ var Stocks = /** @class */ (function () {
         __metadata("design:type", Number)
     ], Stocks.prototype, "id", void 0);
     __decorate([
-        typeorm_1.Column(),
+        typeorm_1.Column({}),
         __metadata("design:type", String)
     ], Stocks.prototype, "code", void 0);
     __decorate([

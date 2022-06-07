@@ -37,25 +37,25 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express = require("express");
-var cors = require("cors");
 var typeorm_1 = require("typeorm");
 var stock_1 = require("./models/stock");
 typeorm_1.createConnection().then(function (db) {
     //we have basically define the cors policies, you can do this the other way too;
-    app.use(cors({
-        origin: ['http://localhost:3000', 'http://localhost:8080', 'http://localhost:4200']
-    }));
+    // app.use(cors({
+    //     origin: ['http://localhost:3000','http://localhost:9090','http://localhost:4200']
+    // }))
     //middleware that will parse the incoming json requests
+    app.use(function (req, res, next) {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+        // define the settings of the below headers
+        // res.setHeader('Access-Control-Allow-Headers','Content-Type,Authorization');
+        next();
+    });
     app.use(express.json());
-    //getting the company table
+    // Getting the company table
     var productRepository = db.getRepository(stock_1.Stocks);
-    //reaching the /route
-    // app.use('/',(req,res,next)=>{
-    //     console.log('this is working');
-    // res.send({
-    //     message:'this is working again'
-    //     })
-    // })
+    // Date filter to be modified still
     app.get('/api/products', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
         var products;
         return __generator(this, function (_a) {
@@ -72,7 +72,7 @@ typeorm_1.createConnection().then(function (db) {
             }
         });
     }); });
-    app.post('/api/products', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    app.post('/api/stock', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
         var product, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -87,42 +87,32 @@ typeorm_1.createConnection().then(function (db) {
             }
         });
     }); });
-    app.get('/api/products/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var product;
+    //sending the company stocks
+    app.get('/api/stocks/:companycode', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var company_code, stocks;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, productRepository.findOne(req.params.id)];
+                case 0:
+                    company_code = req.params.companycode.toLowerCase();
+                    return [4 /*yield*/, productRepository.find({ code: company_code }, { lean: true })];
                 case 1:
-                    product = _a.sent();
-                    res.status(200).json(product);
+                    stocks = _a.sent();
+                    res.status(200).json(stocks);
                     return [2 /*return*/];
             }
         });
     }); });
-    app.put('/api/products/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var product, result;
+    //delete all stocks
+    app.delete('/api/stocks/:companycode', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var company_code;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, productRepository.findOne(req.params.id)];
+                case 0:
+                    company_code = req.params.companycode.toLowerCase();
+                    return [4 /*yield*/, productRepository.delete({ code: company_code }, { lean: true })];
                 case 1:
-                    product = _a.sent();
-                    productRepository.merge(product, req.body);
-                    return [4 /*yield*/, productRepository.save(product)];
-                case 2:
-                    result = _a.sent();
-                    res.status(200).json(product);
-                    return [2 /*return*/];
-            }
-        });
-    }); });
-    app.delete('/api/products/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var product;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, productRepository.delete(req.params.id)];
-                case 1:
-                    product = _a.sent();
-                    res.status(200).json(product);
+                    _a.sent();
+                    res.status(200).json({ 'message': company_code + ' is delete from record' });
                     return [2 /*return*/];
             }
         });
