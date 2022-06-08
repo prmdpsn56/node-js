@@ -2,6 +2,7 @@ import * as express from 'express';
 import * as cors from 'cors';
 import {createConnection} from 'typeorm';
 import {Stocks} from './models/stock';
+import stocksRouter from './routes/routes';
 
 createConnection().then((db)=>{
 //we have basically define the cors policies, you can do this the other way too;
@@ -20,39 +21,14 @@ app.use((req,res,next)=>{
 
 app.use(express.json());
 
-// Getting the company table
-const productRepository = db.getRepository(Stocks);
+//we can get the company table using this
+// const productRepository = db.getRepository(Stocks);
 
-// Date filter to be modified still
-app.get('/api/products',async (req,res) => {
-    const products = await productRepository.find({
-        where:{
-            id: 2
-        }
-    });
-    res.status(200).json(products);
-});    
+app.use('/api',stocksRouter)
 
-app.post('/api/stock',async (req,res) => {
-    const product = await productRepository.create(req.body);
-    const result = await productRepository.save(product);
-    res.status(200).json(result);
-});    
-
-//sending the company stocks
-app.get('/api/stocks/:companycode',async (req,res) => {
-    const company_code = req.params.companycode.toLowerCase();
-    const stocks = await productRepository.find({code: company_code},{lean: true});
-    res.status(200).json(stocks);
-}); 
-
-//delete all stocks
-app.delete('/api/stocks/:companycode',async (req,res) => {
-    const company_code = req.params.companycode.toLowerCase();
-    await productRepository.delete({code: company_code},{lean: true});
-    res.status(200).json({'message':company_code + ' is delete from record'});
-}); 
-
+app.use('/',(req,res,send) => {
+    res.status(200).json({'message':'this is working'});
+})
 
 app.listen(8000);
 })
