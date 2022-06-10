@@ -52,31 +52,26 @@ exports.SendStocks = function (req, res, send) { return __awaiter(void 0, void 0
         }
     });
 }); };
-exports.RegisterStock = function (req, res, send) { return __awaiter(void 0, void 0, void 0, function () {
-    var product, result;
+exports.RegisterStock = function (companyCode) { return __awaiter(void 0, void 0, void 0, function () {
+    var product;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, stock_1.Stocks.create(req.body)];
+            case 0: return [4 /*yield*/, stock_1.Stocks.create({ code: companyCode })];
             case 1:
                 product = _a.sent();
                 return [4 /*yield*/, stock_1.Stocks.save(product)];
             case 2:
-                result = _a.sent();
-                res.status(200).json(result);
+                _a.sent();
                 return [2 /*return*/];
         }
     });
 }); };
-exports.DeleteStock = function (req, res, send) { return __awaiter(void 0, void 0, void 0, function () {
-    var company_code;
+exports.DeleteStock = function (companyCode) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                company_code = req.params.companycode.toLowerCase();
-                return [4 /*yield*/, stock_1.Stocks.delete({ code: company_code })];
+            case 0: return [4 /*yield*/, stock_1.Stocks.delete({ code: companyCode })];
             case 1:
                 _a.sent();
-                res.status(200).json({ 'message': company_code + ' is delete from record' });
                 return [2 /*return*/];
         }
     });

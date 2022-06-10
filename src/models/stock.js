@@ -34,11 +34,11 @@ var Stocks = /** @class */ (function (_super) {
         __metadata("design:type", Number)
     ], Stocks.prototype, "id", void 0);
     __decorate([
-        typeorm_1.Column({}),
+        typeorm_1.Column({ default: null }),
         __metadata("design:type", String)
     ], Stocks.prototype, "code", void 0);
     __decorate([
-        typeorm_1.Column({ type: "timestamp", default: function () { return "CURRENT_TIMESTAMP"; } }),
+        typeorm_1.Column({ type: 'timestamp', default: function () { return 'CURRENT_TIMESTAMP'; } }),
         __metadata("design:type", String)
     ], Stocks.prototype, "time", void 0);
     __decorate([

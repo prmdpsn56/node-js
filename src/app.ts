@@ -1,37 +1,58 @@
 import * as express from 'express';
-import * as cors from 'cors';
-import {createConnection} from 'typeorm';
-import {Stocks} from './models/stock';
+import { createConnection } from 'typeorm';
 import stocksRouter from './routes/routes';
+import * as amqp from 'amqplib/callback_api';
+import * as Controllers from './controllers/controllers';
 
-createConnection().then((db)=>{
-//we have basically define the cors policies, you can do this the other way too;
-// app.use(cors({
-//     origin: ['http://localhost:3000','http://localhost:9090','http://localhost:4200']
-// }))
+createConnection().then(db => {
+  amqp.connect(
+    'amqps://kfzxhqby:sD38IHf5gxMWyzAeKOwt3ctQbY2Ypny8@codfish.rmq.cloudamqp.com/kfzxhqby',
+    (error0, connection) => {
+      if (error0) {
+        throw error0;
+      }
 
-//middleware that will parse the incoming json requests
-app.use((req,res,next)=>{
-    res.setHeader('Access-Control-Allow-Origin','*');
-    res.setHeader('Access-Control-Allow-Methods','GET,POST,PUT,PATCH,DELETE,OPTIONS');
-    // define the settings of the below headers
-    // res.setHeader('Access-Control-Allow-Headers','Content-Type,Authorization');
-    next();
-})
+      connection.createChannel((error1, channel) => {
+        if (error1) {
+          throw error1;
+        }
 
-app.use(express.json());
+        const app = express();
+        app.use(express.json());
+        app.use((req, res, next) => {
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          res.setHeader(
+            'Access-Control-Allow-Methods',
+            'GET,POST,PUT,PATCH,DELETE,OPTIONS'
+          );
+          // res.setHeader('Access-Control-Allow-Headers','Content-Type,Authorization');
+          next();
+        });
 
-//we can get the company table using this
-// const productRepository = db.getRepository(Stocks);
+        channel.assertQueue('company_created', { durable: false });
+        channel.assertQueue('company_deleted', { durable: false });
 
-app.use('/api',stocksRouter)
+        channel.consume('company_created', async msg => {
+          channel.ack(msg);
+          Controllers.RegisterStock(msg.content.toString());
+        });
 
-app.use('/',(req,res,send) => {
-    res.status(200).json({'message':'this is working'});
-})
+        channel.consume('company_deleted', async msg => {
+          channel.ack(msg);
+          Controllers.DeleteStock(msg.content.toString());
+        });
 
-app.listen(8000);
-})
-const app = express();
+        app.use('/api', stocksRouter);
+        app.use('/', (req, res, send) => {
+          res.status(200).json({ message: 'this is working' });
+        });
 
-
+        app.listen(8000);
+        process.on('beforeExit', () => {
+          console.log('closing');
+          connection.close();
+        });
+      });
+    }
+  );
+});
