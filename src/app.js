@@ -60,6 +60,8 @@ typeorm_1.createConnection().then(function (db) {
             });
             channel.assertQueue('company_created', { durable: false });
             channel.assertQueue('company_deleted', { durable: false });
+            channel.assertQueue('rpc_queue', { durable: false });
+            channel.prefetch(1);
             channel.consume('company_created', function (msg) { return __awaiter(void 0, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     channel.ack(msg);
@@ -74,6 +76,23 @@ typeorm_1.createConnection().then(function (db) {
                     return [2 /*return*/];
                 });
             }); });
+            channel.consume('rpc_queue', function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+                var code, stocks;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            code = msg.content.toString();
+                            return [4 /*yield*/, Controllers.SendStocks(code)];
+                        case 1:
+                            stocks = _a.sent();
+                            channel.sendToQueue(msg.properties.replyTo, Buffer.from(JSON.stringify(stocks)), {
+                                correlationId: msg.properties.correlationId
+                            });
+                            channel.ack(msg);
+                            return [2 /*return*/];
+                    }
+                });
+            }); }, { noAck: false });
             app.use('/api', routes_1.default);
             app.use('/', function (req, res, send) {
                 res.status(200).json({ message: 'this is working' });

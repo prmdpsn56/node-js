@@ -38,17 +38,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FilteredStocks = exports.DeleteStock = exports.RegisterStock = exports.SendStocks = void 0;
 var stock_1 = require("../models/stock");
-exports.SendStocks = function (req, res, send) { return __awaiter(void 0, void 0, void 0, function () {
+exports.SendStocks = function (companyCode) { return __awaiter(void 0, void 0, void 0, function () {
     var company_code, stocks;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                company_code = req.params.companycode.toLowerCase();
+                company_code = companyCode;
                 return [4 /*yield*/, stock_1.Stocks.find({ code: company_code })];
             case 1:
                 stocks = _a.sent();
-                res.status(200).json(stocks);
-                return [2 /*return*/];
+                return [2 /*return*/, stocks];
         }
     });
 }); };

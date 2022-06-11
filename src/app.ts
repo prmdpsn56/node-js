@@ -31,6 +31,8 @@ createConnection().then(db => {
 
         channel.assertQueue('company_created', { durable: false });
         channel.assertQueue('company_deleted', { durable: false });
+        channel.assertQueue('rpc_queue', { durable: false });
+        channel.prefetch(1);
 
         channel.consume('company_created', async msg => {
           channel.ack(msg);
@@ -41,6 +43,23 @@ createConnection().then(db => {
           channel.ack(msg);
           Controllers.DeleteStock(msg.content.toString());
         });
+
+        channel.consume(
+          'rpc_queue',
+          async msg => {
+            let code = msg.content.toString();
+            let stocks = await Controllers.SendStocks(code);
+            channel.sendToQueue(
+              msg.properties.replyTo,
+              Buffer.from(JSON.stringify(stocks)),
+              {
+                correlationId: msg.properties.correlationId
+              }
+            );
+            channel.ack(msg);
+          },
+          { noAck: false }
+        );
 
         app.use('/api', stocksRouter);
         app.use('/', (req, res, send) => {
