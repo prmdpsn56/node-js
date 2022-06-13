@@ -5,6 +5,7 @@ import * as amqp from 'amqplib/callback_api';
 import * as Controllers from './controllers/controllers';
 
 createConnection().then(db => {
+  console.log('Database connected')
   amqp.connect(
     'amqps://kfzxhqby:sD38IHf5gxMWyzAeKOwt3ctQbY2Ypny8@codfish.rmq.cloudamqp.com/kfzxhqby',
     (error0, connection) => {
@@ -63,7 +64,7 @@ createConnection().then(db => {
 
         app.use('/api', stocksRouter);
         app.use('/', (req, res, send) => {
-          res.status(200).json({ message: 'this is working' });
+          res.status(200).json({ message: 'This is Working' });
         });
 
         app.listen(8000);

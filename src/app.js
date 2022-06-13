@@ -42,6 +42,7 @@ var routes_1 = require("./routes/routes");
 var amqp = require("amqplib/callback_api");
 var Controllers = require("./controllers/controllers");
 typeorm_1.createConnection().then(function (db) {
+    console.log('Database connected');
     amqp.connect('amqps://kfzxhqby:sD38IHf5gxMWyzAeKOwt3ctQbY2Ypny8@codfish.rmq.cloudamqp.com/kfzxhqby', function (error0, connection) {
         if (error0) {
             throw error0;
@@ -95,7 +96,7 @@ typeorm_1.createConnection().then(function (db) {
             }); }, { noAck: false });
             app.use('/api', routes_1.default);
             app.use('/', function (req, res, send) {
-                res.status(200).json({ message: 'this is working' });
+                res.status(200).json({ message: 'This is Working' });
             });
             app.listen(8000);
             process.on('beforeExit', function () {

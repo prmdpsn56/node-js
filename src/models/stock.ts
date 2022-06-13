@@ -5,7 +5,7 @@ export class Stocks extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: null })
+  @Column()
   code: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

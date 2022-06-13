@@ -36,8 +36,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FilteredStocks = exports.DeleteStock = exports.RegisterStock = exports.SendStocks = void 0;
+exports.FilteredStocks = exports.AddStockEntry = exports.DeleteStock = exports.RegisterStock = exports.SendStocks = void 0;
 var stock_1 = require("../models/stock");
+var typeorm_1 = require("typeorm");
 exports.SendStocks = function (companyCode) { return __awaiter(void 0, void 0, void 0, function () {
     var company_code, stocks;
     return __generator(this, function (_a) {
@@ -75,19 +76,56 @@ exports.DeleteStock = function (companyCode) { return __awaiter(void 0, void 0, 
         }
     });
 }); };
-exports.FilteredStocks = function (req, res, send) { return __awaiter(void 0, void 0, void 0, function () {
-    var products;
+exports.AddStockEntry = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var company_code, stock, result, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, stock_1.Stocks.find({
-                    where: {
-                        id: 2
-                    }
-                })];
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                company_code = req.body.code.toString();
+                return [4 /*yield*/, stock_1.Stocks.create({ code: company_code })];
             case 1:
+                stock = _a.sent();
+                return [4 /*yield*/, stock_1.Stocks.save(stock)];
+            case 2:
+                result = _a.sent();
+                res.status(200).json(result);
+                return [3 /*break*/, 4];
+            case 3:
+                error_1 = _a.sent();
+                console.log(error_1);
+                res.status(400).json({ 'message': 'API is not working, Team looking into it.' });
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.FilteredStocks = function (req, res, send) { return __awaiter(void 0, void 0, void 0, function () {
+    var startDate, endDate, result, products, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                startDate = req.params.startdate;
+                endDate = req.params.enddate;
+                return [4 /*yield*/, stock_1.Stocks.createQueryBuilder('stocks').where('stocks.id = :id', { id: 0 })];
+            case 1:
+                result = _a.sent();
+                return [4 /*yield*/, stock_1.Stocks.find({
+                        where: {
+                            time: typeorm_1.Between(startDate, endDate)
+                        },
+                    })];
+            case 2:
                 products = _a.sent();
                 res.status(200).json(products);
-                return [2 /*return*/];
+                return [3 /*break*/, 4];
+            case 3:
+                error_2 = _a.sent();
+                console.log(error_2);
+                res.status(400).json({ 'message': 'API is not working, Team looking into it.' });
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
         }
     });
 }); };
