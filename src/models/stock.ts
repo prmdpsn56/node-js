@@ -11,6 +11,6 @@ export class Stocks extends BaseEntity {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   time: string;
 
-  @Column({ default: 0 })
-  price: string;
+  @Column()
+  price: number;
 }

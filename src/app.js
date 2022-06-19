@@ -56,7 +56,7 @@ typeorm_1.createConnection().then(function (db) {
             app.use(function (req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
                 res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
-                // res.setHeader('Access-Control-Allow-Headers','Content-Type,Authorization');
+                res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
                 next();
             });
             channel.assertQueue('company_created', { durable: false });
@@ -77,23 +77,22 @@ typeorm_1.createConnection().then(function (db) {
                     return [2 /*return*/];
                 });
             }); });
-            channel.consume('rpc_queue', function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-                var code, stocks;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            code = msg.content.toString();
-                            return [4 /*yield*/, Controllers.SendStocks(code)];
-                        case 1:
-                            stocks = _a.sent();
-                            channel.sendToQueue(msg.properties.replyTo, Buffer.from(JSON.stringify(stocks)), {
-                                correlationId: msg.properties.correlationId
-                            });
-                            channel.ack(msg);
-                            return [2 /*return*/];
-                    }
-                });
-            }); }, { noAck: false });
+            // channel.consume(
+            //   'rpc_queue',
+            //   async msg => {
+            //     let code = msg.content.toString();
+            //     let stocks = await Controllers.SendStocks(code);
+            //     channel.sendToQueue(
+            //       msg.properties.replyTo,
+            //       Buffer.from(JSON.stringify(stocks)),
+            //       {
+            //         correlationId: msg.properties.correlationId
+            //       }
+            //     );
+            //     channel.ack(msg);
+            //   },
+            //   { noAck: false }
+            // );
             app.use('/api', routes_1.default);
             app.use('/', function (req, res, send) {
                 res.status(200).json({ message: 'This is Working' });

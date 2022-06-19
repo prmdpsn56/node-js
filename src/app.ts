@@ -26,7 +26,7 @@ createConnection().then(db => {
             'Access-Control-Allow-Methods',
             'GET,POST,PUT,PATCH,DELETE,OPTIONS'
           );
-          // res.setHeader('Access-Control-Allow-Headers','Content-Type,Authorization');
+          res.setHeader('Access-Control-Allow-Headers','Content-Type');
           next();
         });
 
@@ -45,28 +45,28 @@ createConnection().then(db => {
           Controllers.DeleteStock(msg.content.toString());
         });
 
-        channel.consume(
-          'rpc_queue',
-          async msg => {
-            let code = msg.content.toString();
-            let stocks = await Controllers.SendStocks(code);
-            channel.sendToQueue(
-              msg.properties.replyTo,
-              Buffer.from(JSON.stringify(stocks)),
-              {
-                correlationId: msg.properties.correlationId
-              }
-            );
-            channel.ack(msg);
-          },
-          { noAck: false }
-        );
+        // channel.consume(
+        //   'rpc_queue',
+        //   async msg => {
+        //     let code = msg.content.toString();
+        //     let stocks = await Controllers.SendStocks(code);
+        //     channel.sendToQueue(
+        //       msg.properties.replyTo,
+        //       Buffer.from(JSON.stringify(stocks)),
+        //       {
+        //         correlationId: msg.properties.correlationId
+        //       }
+        //     );
+        //     channel.ack(msg);
+        //   },
+        //   { noAck: false }
+        // );
 
         app.use('/api', stocksRouter);
+
         app.use('/', (req, res, send) => {
           res.status(200).json({ message: 'This is Working' });
         });
-
         app.listen(8000);
         process.on('beforeExit', () => {
           console.log('closing');

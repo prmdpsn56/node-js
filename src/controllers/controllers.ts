@@ -1,14 +1,14 @@
 import { Stocks } from '../models/stock';
 import { MoreThan,createQueryBuilder,LessThan,Between } from 'typeorm';
 
-export const SendStocks = async companyCode => {
-  const company_code = companyCode;
-  const stocks = await Stocks.find({ code: company_code });
-  return stocks;
-};
+export const SendStocks = async (req,res,send) => {
+  const company_code = req.params.companycode.toLowerCase();
+  const stocks = await Stocks.find({code: company_code});
+  res.status(200).json(stocks);
+}; 
 
 export const RegisterStock = async companyCode => {
-  const product = await Stocks.create({ code: companyCode });
+  const product = await Stocks.create({ code: companyCode, price: 0});
   await Stocks.save(product);
 };
 
@@ -19,7 +19,8 @@ export const DeleteStock = async companyCode => {
 export const AddStockEntry = async (req,res,next) => {  
   try {
     let company_code = req.body.code.toString();
-    const stock = await Stocks.create({ code: company_code });
+    let price = req.body.price;
+    const stock = await Stocks.create({ code: company_code,price: price});
     const result = await Stocks.save(stock);
     res.status(200).json(result); 
   } catch (error) {
@@ -32,10 +33,11 @@ export const FilteredStocks = async (req, res, send) => {
   try {
     let startDate = req.params.startdate;
     let endDate = req.params.enddate;
-    const result = await Stocks.createQueryBuilder('stocks').where('stocks.id = :id', { id: 0 });
+    let company_code = req.params.companycode.toLowerCase();
     const products = await Stocks.find({
     where: {
-        time: Between(startDate,endDate);
+        code: company_code,
+        time: Between(startDate,endDate)
       },
     });
     res.status(200).json(products);

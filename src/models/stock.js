@@ -42,8 +42,8 @@ var Stocks = /** @class */ (function (_super) {
         __metadata("design:type", String)
     ], Stocks.prototype, "time", void 0);
     __decorate([
-        typeorm_1.Column({ default: 0 }),
-        __metadata("design:type", String)
+        typeorm_1.Column(),
+        __metadata("design:type", Number)
     ], Stocks.prototype, "price", void 0);
     Stocks = __decorate([
         typeorm_1.Entity()
